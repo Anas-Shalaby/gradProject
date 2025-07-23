@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload your photo with 194 Graduation Frame 🎓</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --primary-color: #2d3436;
+        --accent-color: #0984e3;
+        --background-color: #f8f9fa;
+        --text-color: #2d3436;
+        --shadow-color: rgba(45, 52, 54, 0.1);
+        --transition-speed: 0.3s;
+      }
+
+      [data-theme="dark"] {
+        --primary-color: #1a1a1a;
+        --accent-color: #00a8ff;
+        --background-color: #121212;
+        --text-color: #f8f9fa;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+      }
+
+      body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: "Open Sans", sans-serif;
+        line-height: 1.6;
+      }
+
+      header {
+        background: linear-gradient(135deg, var(--primary-color), #636e72);
+        padding: 2rem 1rem;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      header::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--accent-color);
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.5s ease;
+      }
+
+      header:hover::after {
+        transform: scaleX(1);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        font-family: "Playfair Display", serif;
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      #controls {
+        margin: 2rem 0;
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+      }
+
+      .file-upload {
+        position: relative;
+        margin-bottom: 2rem;
+        width: 100%;
+      }
+
+      input[type="file"] {
+        padding: 1rem;
+        font-size: 1rem;
+        border: 2px dashed var(--accent-color);
+        border-radius: 12px;
+        background-color: rgba(9, 132, 227, 0.05);
+        color: var(--text-color);
+        cursor: pointer;
+        width: 100%;
+        transition: all var(--transition-speed) ease;
+      }
+
+      input[type="file"]:hover {
+        border-color: #00a8ff;
+        background-color: rgba(9, 132, 227, 0.1);
+        transform: translateY(-2px);
+      }
+
+      #canvas-container {
+        width: 100%;
+        max-width: 800px;
+        aspect-ratio: 1 / 1;
+        background-color: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px var(--shadow-color);
+        transition: transform var(--transition-speed) ease;
+        opacity: 0;
+        animation: slideUp 0.8s ease forwards;
+      }
+
+      #canvas-container:hover {
+        transform: translateY(-5px);
+      }
+
+      canvas {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      .button {
+        background-color: var(--accent-color);
+        color: white;
+        padding: 1rem 2.5rem;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        font-family: "Open Sans", sans-serif;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all var(--transition-speed) ease;
+        margin: 0.75rem auto;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .button::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 300%;
+        height: 300%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translate(-50%, -50%) scale(0);
+        border-radius: 50%;
+        transition: transform 0.6s ease;
+      }
+
+      .button:hover {
+        background-color: #00a8ff;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
+      }
+
+      .button:hover::after {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .reset-button {
+        background-color: transparent;
+        border: 2px solid var(--accent-color);
+        color: var(--accent-color);
+        font-size: 0.9rem;
+        padding: 0.6rem 1.8rem;
+      }
+
+      .reset-button:hover {
+        background-color: var(--accent-color);
+        color: white;
+      }
+
+      .footer-text {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #636e72;
+        text-align: center;
+        font-family: "Open Sans", sans-serif;
+        font-weight: 400;
+        opacity: 0.8;
+        transition: opacity var(--transition-speed) ease;
+      }
+
+      .footer-text:hover {
+        opacity: 1;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Loading animation */
+      .loading-spinner {
+        display: none;
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(9, 132, 227, 0.1);
+        border-left-color: var(--accent-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 1rem auto;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Success message animation */
+      .success-message {
+        display: none;
+        color: #00b894;
+        font-weight: 600;
+        padding: 1rem;
+        border-radius: 8px;
+        background-color: rgba(0, 184, 148, 0.1);
+        margin-top: 1rem;
+        animation: fadeIn 0.5s ease;
+      }
+
+      /* Theme Switch */
+      .theme-switch {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 100;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: var(--accent-color);
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      .theme-label {
+        color: var(--text-color);
+        font-size: 0.9rem;
+      }
+
+      /* Editor Container */
+      .editor-container {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      /* Toolbar */
+      .toolbar {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px var(--shadow-color);
+      }
+
+      .tool-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        background: var(--accent-color);
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+      }
+
+      .tool-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .filter-select {
+        padding: 0.5rem 1rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-color);
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      /* File Upload Zone */
+      .file-upload-container {
+        width: 100%;
+        max-width: 500px;
+      }
+
+      .file-upload {
+        position: relative;
+        padding: 2rem;
+        text-align: center;
+        border: 3px dashed var(--accent-color);
+        border-radius: 12px;
+        background: rgba(9, 132, 227, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .file-upload.drag-over {
+        background: rgba(9, 132, 227, 0.1);
+        transform: scale(1.02);
+      }
+
+      .upload-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .upload-icon {
+        width: 48px;
+        height: 48px;
+        fill: var(--accent-color);
+      }
+
+      /* Preview Container */
+      .preview-container {
+        width: 300px;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px var(--shadow-color);
+      }
+
+      .preview-container h3 {
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        font-size: 1.2rem;
+      }
+
+      .preview-image {
+        width: 100%;
+        aspect-ratio: 1;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      /* Responsive Layout */
+      @media (max-width: 1200px) {
+        .editor-container {
+          flex-direction: column;
+        }
+
+        .preview-container {
+          width: 100%;
+          max-width: 300px;
+          margin: 0 auto;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .toolbar {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .theme-switch {
+          position: static;
+          margin: 1rem auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Helwan Fifth batch Frame 🎓</h1>
+    </header>
+    <main>
+      <div class="theme-switch">
+        <label class="switch">
+          <input type="checkbox" id="themeToggle" />
+          <span class="slider round"></span>
+        </label>
+        <span class="theme-label">Dark Mode</span>
+      </div>
+
+      <div id="controls">
+        <div class="file-upload-container">
+          <div class="file-upload" id="dropZone">
+            <input type="file" id="upload" accept="image/*" />
+            <div class="upload-content">
+              <svg class="upload-icon" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              <p>Drag & drop your photo here<br />or click to browse</p>
+            </div>
+            <div class="loading-spinner" id="loading"></div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="editor-container"
+        style="
+          display: flex;
+          flex-direction: column-reverse;
+          gap: 1rem;
+          align-items: center;
+        "
+      >
+        <div class="toolbar">
+          <button class="tool-btn" id="rotateLeft" title="Rotate Left">
+            ↶
+          </button>
+          <button class="tool-btn" id="rotateRight" title="Rotate Right">
+            ↷
+          </button>
+          <select class="filter-select" id="imageFilter">
+            <option value="none">No Filter</option>
+            <option value="grayscale">Black & White</option>
+            <option value="sepia">Sepia</option>
+            <option value="vintage">Vintage</option>
+            <option value="warm">Warm</option>
+            <option value="cool">Cool</option>
+          </select>
+          <button class="tool-btn" id="zoomIn" title="Zoom In">+</button>
+          <button class="tool-btn" id="zoomOut" title="Zoom Out">-</button>
+          <button class="tool-btn" id="fitImage" title="Fit Image">⟲</button>
+        </div>
+
+        <div id="canvas-container">
+          <canvas id="canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="success-message" id="successMessage">
+        ✨ Your photo has been successfully loaded! Feel free to adjust it.
+      </div>
+
+      <div id="controls">
+        <button id="download" class="button">
+          <span>Download Your Photo</span>
+        </button>
+        <button id="reset" class="button reset-button">Reset Canvas</button>
+      </div>
+      <p class="footer-text">
+        ✨ Tip: Click and drag to move your photo, pinch or scroll to zoom
+        in/out
+      </p>
+      <div class="footer-text">Designed by Anas Youssef</div>
+    </main>
+
+    <script>
+      const canvas = new fabric.Canvas("canvas", {
+        preserveObjectStacking: true,
+      });
+      const container = document.getElementById("canvas-container");
+      const canvasEl = document.getElementById("canvas");
+      const dropZone = document.getElementById("dropZone");
+      const themeToggle = document.getElementById("themeToggle");
+      let userImage = null;
+      let frameImage = null;
+      let currentRotation = 0;
+      let currentFilter = "none";
+
+      function resizeCanvas() {
+        const size = container.offsetWidth;
+        canvas.setWidth(size);
+        canvas.setHeight(size);
+        canvas.renderAll();
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      fabric.Image.fromURL(
+        "/assets/finalframe.png",
+        function (img) {
+          frameImage = img;
+          img.scaleToWidth(canvas.getWidth());
+          img.set({ selectable: false, evented: false, opacity: 0.7 });
+          canvas.add(img);
+        },
+        { crossOrigin: "anonymous" }
+      );
+
+      const loading = document.getElementById("loading");
+      const successMessage = document.getElementById("successMessage");
+
+      document
+        .getElementById("upload")
+        .addEventListener("change", function (e) {
+          const reader = new FileReader();
+
+          // Show loading animation
+          loading.style.display = "block";
+          successMessage.style.display = "none";
+
+          reader.onload = function (f) {
+            fabric.Image.fromURL(
+              f.target.result,
+              function (img) {
+                if (userImage) canvas.remove(userImage);
+                userImage = img;
+                img.scaleToWidth(canvas.getWidth());
+                img.set({
+                  left: 0,
+                  top: 0,
+                  lockUniScaling: true,
+                  hasControls: true,
+                  hasBorders: true,
+                  cornerStyle: "circle",
+                });
+                canvas.add(img);
+                canvas.setActiveObject(img);
+                canvas.sendToBack(img);
+
+                // Hide loading and show success message
+                loading.style.display = "none";
+                successMessage.style.display = "block";
+
+                // Animate canvas container
+                const container = document.getElementById("canvas-container");
+                container.style.animation = "none";
+                container.offsetHeight; // Trigger reflow
+                container.style.animation = "slideUp 0.8s ease forwards";
+              },
+              { crossOrigin: "anonymous" }
+            );
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        });
+
+      document
+        .getElementById("download")
+        .addEventListener("click", function () {
+          const downloadBtn = document.getElementById("download");
+          const originalText = downloadBtn.innerHTML;
+
+          // Show loading state
+          downloadBtn.innerHTML = "<span>Preparing Download...</span>";
+          downloadBtn.style.opacity = "0.7";
+          downloadBtn.style.cursor = "wait";
+
+          // Small delay to show the loading state
+          setTimeout(() => {
+            if (frameImage) frameImage.set("opacity", 1);
+            const dataURL = canvas.toDataURL({ format: "png", multiplier: 3 });
+            if (frameImage) frameImage.set("opacity", 0.7);
+
+            const link = document.createElement("a");
+            link.href = dataURL;
+            link.download = "graduation_frame.png";
+            link.click();
+
+            // Show success state
+            downloadBtn.innerHTML = "<span>✓ Downloaded!</span>";
+            downloadBtn.style.backgroundColor = "#00b894";
+            downloadBtn.style.opacity = "1";
+            downloadBtn.style.cursor = "pointer";
+
+            // Reset button after 2 seconds
+            setTimeout(() => {
+              downloadBtn.innerHTML = originalText;
+              downloadBtn.style.backgroundColor = "";
+            }, 2000);
+          }, 500);
+        });
+
+      document.getElementById("reset").addEventListener("click", function () {
+        if (userImage) {
+          canvas.remove(userImage);
+          userImage = null;
+          canvas.discardActiveObject();
+          canvas.renderAll();
+        }
+      });
+
+      // Theme toggle
+      themeToggle.addEventListener("change", function () {
+        document.body.setAttribute(
+          "data-theme",
+          this.checked ? "dark" : "light"
+        );
+      });
+
+      // Drag and drop
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+
+      function highlight(e) {
+        dropZone.classList.add("drag-over");
+      }
+
+      function unhighlight(e) {
+        dropZone.classList.remove("drag-over");
+      }
+
+      dropZone.addEventListener("drop", handleDrop, false);
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        handleFile(file);
+      }
+
+      function handleFile(file) {
+        if (file && file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          loading.style.display = "block";
+          successMessage.style.display = "none";
+
+          reader.onload = function (e) {
+            loadImage(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function loadImage(src) {
+        fabric.Image.fromURL(src, function (img) {
+          if (userImage) canvas.remove(userImage);
+          userImage = img;
+          resetImagePosition();
+          canvas.add(img);
+          canvas.setActiveObject(img);
+          canvas.sendToBack(img);
+          updatePreview();
+
+          loading.style.display = "none";
+          successMessage.style.display = "block";
+
+          container.style.animation = "none";
+          container.offsetHeight;
+          container.style.animation = "slideUp 0.8s ease forwards";
+        });
+      }
+
+      function resetImagePosition() {
+        if (!userImage) return;
+        userImage.scaleToWidth(canvas.getWidth());
+        userImage.set({
+          left: 0,
+          top: 0,
+          lockUniScaling: true,
+          hasControls: true,
+          hasBorders: true,
+          cornerStyle: "circle",
+        });
+      }
+
+      // Image rotation
+      document
+        .getElementById("rotateLeft")
+        .addEventListener("click", function () {
+          rotateImage(-90);
+        });
+
+      document
+        .getElementById("rotateRight")
+        .addEventListener("click", function () {
+          rotateImage(90);
+        });
+
+      function rotateImage(angle) {
+        if (!userImage) return;
+        currentRotation = (currentRotation + angle) % 360;
+        userImage.rotate(currentRotation);
+        canvas.renderAll();
+        updatePreview();
+      }
+
+      // Image filters
+      document
+        .getElementById("imageFilter")
+        .addEventListener("change", function (e) {
+          applyFilter(e.target.value);
+        });
+
+      function applyFilter(filterName) {
+        if (!userImage) return;
+
+        userImage.filters = [];
+        currentFilter = filterName;
+
+        switch (filterName) {
+          case "grayscale":
+            userImage.filters.push(new fabric.Image.filters.Grayscale());
+            break;
+          case "sepia":
+            userImage.filters.push(new fabric.Image.filters.Sepia());
+            break;
+          case "vintage":
+            userImage.filters.push(new fabric.Image.filters.Vintage());
+            break;
+          case "warm":
+            userImage.filters.push(
+              new fabric.Image.filters.ColorMatrix({
+                matrix: [
+                  1.3, 0, 0, 0, 0, 0, 1.1, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 0, 1,
+                  0,
+                ],
+              })
+            );
+            break;
+          case "cool":
+            userImage.filters.push(
+              new fabric.Image.filters.ColorMatrix({
+                matrix: [
+                  0.9, 0, 0, 0, 0, 0, 1.1, 0, 0, 0, 0, 0, 1.3, 0, 0, 0, 0, 0, 1,
+                  0,
+                ],
+              })
+            );
+            break;
+        }
+
+        userImage.applyFilters();
+        canvas.renderAll();
+        updatePreview();
+      }
+
+      // Zoom controls
+      document.getElementById("zoomIn").addEventListener("click", function () {
+        zoom(1.1);
+      });
+
+      document.getElementById("zoomOut").addEventListener("click", function () {
+        zoom(0.9);
+      });
+
+      function zoom(factor) {
+        if (!userImage) return;
+        userImage.scale(userImage.scaleX * factor);
+        canvas.renderAll();
+        updatePreview();
+      }
+
+      document
+        .getElementById("fitImage")
+        .addEventListener("click", function () {
+          resetImagePosition();
+          canvas.renderAll();
+          updatePreview();
+        });
+
+      // Preview update
+      function updatePreview() {
+        if (!userImage) return;
+        const preview = document.getElementById("previewImage");
+        preview.innerHTML = "";
+        preview.appendChild(canvas.toCanvas().cloneNode(true));
+      }
+
+      // Touch gestures
+      const hammer = new Hammer(canvas.upperCanvasEl);
+      hammer.get("pinch").set({ enable: true });
+
+      let initialScale = 1;
+
+      hammer.on("pinchstart", function () {
+        const active = canvas.getActiveObject();
+        if (active) {
+          initialScale = active.scaleX;
+        }
+      });
+
+      hammer.on("pinchmove", function (ev) {
+        const active = canvas.getActiveObject();
+        if (active) {
+          const newScale = initialScale * ev.scale;
+          active.scale(newScale);
+          canvas.requestRenderAll();
+        }
+      });
+    </script>
+  </body>
+</html>
